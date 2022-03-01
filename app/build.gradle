@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-android-extensions'
+    id 'kotlin-kapt'
 }
 
 android {
@@ -41,4 +42,8 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+
+//    注解的形式申请 权限
+    implementation "com.github.permissions-dispatcher:permissionsdispatcher:4.9.1"
+    kapt "com.github.permissions-dispatcher:permissionsdispatcher-processor:4.9.1"
 }
