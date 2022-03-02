@@ -1,4 +1,4 @@
-package cn.iichen.quickstudy
+package cn.iichen.quickstudy.widget
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -6,7 +6,10 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
-import android.widget.ImageView
+import cn.iichen.quickstudy.R
+import cn.iichen.quickstudy.ext.Ext
+import cn.iichen.quickstudy.pojo.Po
+import cn.iichen.quickstudy.pojo.PrismWordsInfo
 
 /**
  *
@@ -41,9 +44,10 @@ import android.widget.ImageView
 
 
 class ImageRegion : androidx.appcompat.widget.AppCompatImageView{
-    private lateinit var region: Region
+    private var screenWidth: Int = 0
     lateinit var mPaint:Paint
-    lateinit var mPath:Path
+    var mPathList:MutableList<Path> = mutableListOf()
+    var mRegionList:MutableList<Region> = mutableListOf()
 
     constructor(context: Context) : super(context){
         init(context)
@@ -59,75 +63,66 @@ class ImageRegion : androidx.appcompat.widget.AppCompatImageView{
         init(context)
     }
 
-    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        super.onSizeChanged(w, h, oldw, oldh)
-        val screenWidth = resources.displayMetrics.widthPixels
-        val screenHeight = resources.displayMetrics.heightPixels
+    fun setWordPos(wordsInfo:MutableList<PrismWordsInfo>){
+        for(wordInfo in wordsInfo){
+            var mPath:Path = Path()
+            var region: Region = Region()
 
-        val options = BitmapFactory.Options()
-        options.inJustDecodeBounds = true
-        val bitmap = BitmapFactory.decodeResource(resources,R.drawable.test,options)
-        options.inSampleSize = 1
-        options.inJustDecodeBounds = false
-        val width = options.outWidth
-        val height_= options.outHeight
+            Ext.ocrBitmap?.also{
+                mPath.run {
+                    moveTo(wordInfo.pos[0].x * screenWidth / it.width * 1f,wordInfo.pos[0].y * height / it.height * 1f)
+                    lineTo(wordInfo.pos[1].x * screenWidth / it.width * 1f,wordInfo.pos[1].y * height / it.height * 1f)
+                    lineTo(wordInfo.pos[2].x * screenWidth / it.width * 1f,wordInfo.pos[2].y * height / it.height * 1f)
+                    lineTo(wordInfo.pos[3].x * screenWidth / it.width * 1f,wordInfo.pos[3].y * height / it.height * 1f)
+                    close()
+                }
 
-        mPath.run {
-            moveTo(101f * screenWidth / width,227f * height / height_)
-            lineTo(382f * screenWidth / width,169f * height / height_)
-            lineTo(386f * screenWidth / width,192f * height / height_)
-            lineTo(105f * screenWidth / width,250f * height / height_)
-            close()
+                val bounds = RectF()
+                mPath.computeBounds(bounds,true)
+                region.setPath(mPath,Region(bounds.left.toInt
+                    (),bounds.top.toInt(),bounds.right.toInt
+                    (),bounds.bottom.toInt()))
+            }
+            mPathList.add(mPath)
+            mRegionList.add(region)
         }
-
-        val bounds = RectF()
-        mPath.computeBounds(bounds,true)
-        region = Region()
-        region.setPath(mPath,Region(bounds.left.toInt
-        (),bounds.top.toInt(),bounds.right.toInt
-        (),bounds.bottom.toInt()))
+        postInvalidate()
     }
 
     private fun init(context: Context) {
+        screenWidth = resources.displayMetrics.widthPixels
         mPaint = Paint()
         mPaint.apply {
             color = Color.RED
             strokeWidth = 2f
             style = Paint.Style.STROKE
         }
-        mPath = Path()
     }
-/*
-        {
-            "x": 101,
-            "y": 227
-        },
-        {
-            "x": 382,
-            "y": 169
-        },
-        {
-            "x": 386,
-            "y": 192
-        },
-        {
-            "x": 105,
-            "y": 250
-        }
- */
 
     override fun draw(canvas: Canvas?) {
         super.draw(canvas)
-        canvas?.drawPath(mPath,mPaint)
+        for(path in mPathList){
+            canvas?.drawPath(path,mPaint)
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         when(event?.action){
             MotionEvent.ACTION_DOWN->{
-                Log.d("iichen","############# ${event.x} ${event.y} ${region.bounds}")
-                if(region.contains(event.x.toInt(), event.y.toInt())){
-                    Log.d("iichen","############### 包含")
+                var contains = false
+                var index = 0
+                for (region in mRegionList){
+                    if(region.contains(event.x.toInt(), event.y.toInt())){
+                        contains = true
+                        index = mRegionList.indexOf(region)
+                        break
+                    }else{
+                        contains = false
+                    }
+                }
+                if(contains){
+                    Log.d("iichen","############### 包含  触摸点所在 第 $index 个")
                 }else{
                     Log.d("iichen","############### 不包含")
                 }

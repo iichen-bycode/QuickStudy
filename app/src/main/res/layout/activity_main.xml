@@ -1,18 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:paddingTop="@dimen/top_bar"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".ui.MainActivity">
 
-
-    <cn.iichen.quickstudy.ImageRegion
-        android:id="@+id/image"
-        android:src="@drawable/test"
-        android:scaleType="fitStart"
-        android:layout_width="wrap_content"
+    <TextView
+        android:padding="10dp"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:textSize="18dp"
+        android:text="拍照或从相册选取图片进行英文识别！"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
-</LinearLayout>
+
+    <LinearLayout
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/capture"
+            android:layout_marginTop="45dp"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/capture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:gravity="center"
+            android:textStyle="bold"
+            android:text="拍照"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+
+        <ImageView
+            android:id="@+id/gallery"
+            android:layout_marginTop="45dp"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/gallery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:gravity="center"
+            android:text="相册"
+            android:textStyle="bold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+</RelativeLayout>
