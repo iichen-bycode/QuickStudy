@@ -3,17 +3,26 @@ package cn.iichen.quickstudy.ui
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.os.Build
 import android.os.Bundle
 import android.util.Base64
 import android.util.Log
+import android.view.KeyEvent
+import android.view.View
+import android.widget.FrameLayout
 import androidx.activity.viewModels
+import androidx.core.view.isVisible
 import cn.iichen.quickstudy.R
 import cn.iichen.quickstudy.base.BaseActivity
 import cn.iichen.quickstudy.ext.Ext
 import cn.iichen.quickstudy.model.OcrImgModel
+import cn.iichen.quickstudy.widget.ImageRegion
+import cn.iichen.quickstudy.widget.X5WebView
 import com.blankj.utilcode.util.ActivityUtils.startActivity
 import com.blankj.utilcode.util.ImageUtils
 import com.blankj.utilcode.util.ToastUtils
+import com.tencent.smtt.sdk.WebView
+import com.tencent.smtt.sdk.WebViewClient
 import kotlinx.android.synthetic.main.activity_ocr_image.*
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -72,6 +81,17 @@ class OcrImageActivity : BaseActivity() {
         screenWidth = resources.displayMetrics.widthPixels
         screenHeight = resources.displayMetrics.heightPixels
 
+        init()
+
+        image.setWordOnClickListener(object : ImageRegion.OnWordClickListener{
+            override fun onWordClick(word: String) {
+                wordSearch.visibility = View.VISIBLE
+                webview.loadUrl("javascript:(function(){  document.getElementById(\"j-textarea\").value = \"${word}\"; document.getElementsByClassName(\"trans-btn\")[0].click();})()")
+            }
+        })
+        btnExit.setOnClickListener {
+            wordSearch.visibility = View.INVISIBLE
+        }
 
         Ext.ocrBitmap?.run {
             val baos = ByteArrayOutputStream()
@@ -101,6 +121,8 @@ class OcrImageActivity : BaseActivity() {
         var width = bitmap.width
         var height = bitmap.height
 
+        Log.d("iichen","########## $width $height")
+
         if (width >= screenWidth) {
             val radio = width / screenWidth
             val bmHeight = height / radio
@@ -108,6 +130,8 @@ class OcrImageActivity : BaseActivity() {
             width = bitmap.width
             height = bitmap.height
         }
+
+        Log.d("iichen","##########2      $width $height")
 
         val radio = width * 1f / screenWidth
         val scaleHeight = height / radio
@@ -118,5 +142,54 @@ class OcrImageActivity : BaseActivity() {
         image.layoutParams = params
 
         image.setImageBitmap(bitmap)
+    }
+
+    fun init() {
+        webview.webViewClient = object : WebViewClient() {
+            override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
+                return false
+            }
+
+            override fun onPageFinished(view: WebView, url: String) {
+                super.onPageFinished(view, url)
+                webview.loadUrl("javascript:(function(){  document.getElementById(\"new-header\").style.display=\"none\";})()")
+                if (Build.VERSION.SDK.toInt() >= 16) changGoForwardButton(view)
+            }
+        }
+
+        webview.loadUrl(mHomeUrl)
+    }
+    private val mHomeUrl = "https://fanyi.baidu.com/"
+    private val disable = 120
+    private val enable = 255
+
+    private fun changGoForwardButton(view: WebView) {
+        if (view.canGoBack()) btnBack.imageAlpha = enable else btnBack.imageAlpha = disable
+        if (view.canGoForward()) btnForward.imageAlpha = enable else btnForward.imageAlpha = disable
+        if (view.url != null && view.url.equals(
+                mHomeUrl,
+                ignoreCase = true
+            )
+        ) {
+            btnHome.imageAlpha = disable
+            btnHome.isEnabled = false
+        } else {
+            btnHome.imageAlpha = enable
+            btnHome.isEnabled = true
+        }
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        return if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if(webview.isVisible){
+                if (webview != null && webview.canGoBack()) {
+                    webview.goBack()
+                    if (Build.VERSION.SDK.toInt() >= 16) changGoForwardButton(webview)
+                }else{
+                    wordSearch.visibility = View.INVISIBLE
+                }
+                true
+            }else super.onKeyDown(keyCode, event)
+        } else super.onKeyDown(keyCode, event)
     }
 }

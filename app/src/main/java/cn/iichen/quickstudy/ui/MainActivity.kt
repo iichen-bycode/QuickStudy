@@ -2,25 +2,19 @@ package cn.iichen.quickstudy.ui
 
 import android.Manifest
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-import android.util.Base64
-import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
 import cn.iichen.quickstudy.R
 import cn.iichen.quickstudy.base.BaseActivity
 import cn.iichen.quickstudy.ext.Ext
-import com.blankj.utilcode.util.EncodeUtils
-import com.blankj.utilcode.util.ImageUtils
 import kotlinx.android.synthetic.main.activity_main.*
 import permissions.dispatcher.NeedsPermission
 import permissions.dispatcher.RuntimePermissions
-import java.io.ByteArrayOutputStream
 import java.io.File
 
 

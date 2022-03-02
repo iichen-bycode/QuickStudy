@@ -44,6 +44,7 @@ import cn.iichen.quickstudy.pojo.PrismWordsInfo
 
 
 class ImageRegion : androidx.appcompat.widget.AppCompatImageView{
+    private lateinit var wordsInfo: MutableList<PrismWordsInfo>
     private var screenWidth: Int = 0
     lateinit var mPaint:Paint
     var mPathList:MutableList<Path> = mutableListOf()
@@ -64,6 +65,7 @@ class ImageRegion : androidx.appcompat.widget.AppCompatImageView{
     }
 
     fun setWordPos(wordsInfo:MutableList<PrismWordsInfo>){
+        this.wordsInfo = wordsInfo
         for(wordInfo in wordsInfo){
             var mPath:Path = Path()
             var region: Region = Region()
@@ -122,14 +124,23 @@ class ImageRegion : androidx.appcompat.widget.AppCompatImageView{
                     }
                 }
                 if(contains){
-                    Log.d("iichen","############### 包含  触摸点所在 第 $index 个")
-                }else{
-                    Log.d("iichen","############### 不包含")
+                    this.listener?.run {
+                         onWordClick(wordsInfo[index].word)
+                    }
                 }
             }
 
         }
         return super.onTouchEvent(event)
+    }
+    var listener:OnWordClickListener? = null
+
+    interface OnWordClickListener{
+        fun onWordClick(word:String)
+    }
+
+    fun setWordOnClickListener(listener: OnWordClickListener){
+        this.listener = listener
     }
 }
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:paddingTop="@dimen/top_bar"
@@ -10,4 +10,66 @@
         android:scaleType="fitStart"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-</LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/wordSearch"
+        android:visibility="invisible"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <cn.iichen.quickstudy.widget.X5WebView
+            android:id="@+id/webview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <LinearLayout
+            android:layout_alignParentBottom="true"
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#ECF0F2"
+            android:orientation="horizontal" >
+
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2.5dp"
+                android:layout_weight="1"
+                android:background="#ECF0F2"
+                android:padding="10dp"
+                android:src="@drawable/theme_toolbar_btn_back_fg_normal0" />
+
+            <ImageButton
+                android:id="@+id/btnForward"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2.5dp"
+                android:layout_weight="1"
+                android:background="#ECF0F2"
+                android:padding="10dp"
+                android:src="@drawable/theme_toolbar_btn_forward_fg_normal0" />
+
+            <ImageButton
+                android:id="@+id/btnHome"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2.5dp"
+                android:layout_weight="1"
+                android:background="#ECF0F2"
+                android:padding="10dp"
+                android:src="@drawable/theme_toolbar_btn_home_fg_normal2" />
+
+            <ImageButton
+                android:id="@+id/btnExit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2.5dp"
+                android:layout_weight="1"
+                android:background="#ECF0F2"
+                android:padding="10dp"
+                android:src="@drawable/theme_menu_btn_quit_fg_normal0" />
+        </LinearLayout>
+    </RelativeLayout>
+
+</FrameLayout>
